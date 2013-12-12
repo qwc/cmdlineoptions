@@ -4,6 +4,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 
+/**
+ * Written by Marcel M. Otte, (c) 2013
+ * For use under the BSD 2-clause License, or in other words: 
+ * Do what you want with it as long as you leave all copyright notices where they are
+ *  and don't bother me when you break your pc. :)
+ */
+
+
 public class CmdOptions {
 
   private static CmdOptions instance;
