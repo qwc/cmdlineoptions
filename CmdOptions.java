@@ -1,4 +1,3 @@
-package at.mkw.inlocs.blinksetassembler.server;
 
 import java.util.ArrayList;
 import java.util.Arrays;
