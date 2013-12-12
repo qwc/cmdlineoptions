@@ -1,4 +1,4 @@
-jcmdlineoptions
+cmdlineoptions-java
 ===============
 
 A simple java class handling commandline options.
