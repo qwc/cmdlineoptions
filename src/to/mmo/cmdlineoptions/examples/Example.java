@@ -10,7 +10,7 @@ public class Example {
 				"--name", // it's always good to define a long commandline
 							// parameter with a describing name
 				"-n", // of course, programmer are always lazy so give them an
-						// option to shortcut your option
+						// possibility to shortcut your option
 				"whatever", // a default parameter is good if you need the
 							// option within your program, but don't care when
 							// it's omitted on execution
@@ -38,7 +38,7 @@ public class Example {
 		initOptions(); // init the commandline options
 		CmdOptions.i().parse(args); // parse them, and your done. --help is automatically set, so you can use it right away.
 		
-		// now your program follows using this options...
+		// now your program follows, using this options...
 
 	}
 
