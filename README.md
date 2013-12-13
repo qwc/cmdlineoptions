@@ -12,6 +12,7 @@ It has got automatic help handling of all configured options with "-h", "--help"
 Future plans
 ===============
 
+- tests, of course...
 - refactoring for more flexibility
 - better errorhandling
 - writing a simple getting started
