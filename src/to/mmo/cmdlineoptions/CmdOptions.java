@@ -17,7 +17,7 @@ public class CmdOptions {
 
   private static CmdOptions instance;
 
-  public static class Option {
+  private static class Option {
     public String name;
     public String cmdOption;
     public String longCmdOption;
@@ -159,7 +159,7 @@ public class CmdOptions {
   public void parse(String[] args) {
     // now parse
     if (args.length > 0) {
-      int l = 0, i = 0;
+      int i = 0;
       String arg = null;
       // iterate through all options
       for (; i < args.length; ++i) {
