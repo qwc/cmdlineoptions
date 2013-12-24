@@ -1,24 +1,32 @@
-cmdlineoptions-java
+cmdlineoptions
 ===============
 
-A simple java class handling commandline options.
+A library for some languages handling commandline options in the dashed fashion.
 
-Currently available just as a Java class, within an eclipse project. :)
+Currently available as:
+- java
+  - Currently available just as a Java class, within an eclipse project. :)
+- C
+  - ... not ... quite ... ready ... 
+- (C++ maybe coming soon...)
+- maybe other languages in the future?
 
 It supports single dashed options like "-h", double dashed options "--help" and additional option alternatives.
 It has got automatic help handling of all configured options with "-h", "--help" and "-?".
 
+The library - or better, the libraries - are planned to be consistent over all languages, so you are able to define and check and retrieve options with similar function calls.
 
-Future plans
+Current work and future plans
 ===============
 
-- tests, of course...
-- refactoring for more flexibility
-- better errorhandling
-- writing a simple getting started
+Working on:
+- JUnit tests
+- Java: refactoring
+- Java: better errorhandling
+- Java: Examples
+- C version
+- Getting started
 
-- writing the exact same thing for:
- - C
- - C++
- - bash?
+Future plans:
+ - C++ version
  - ... 
