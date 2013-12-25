@@ -1,7 +1,7 @@
 #ifndef CMDLINEOPTIONS_H
 #define CMDLINEOPTIONS_H
 
-struct Option {
+typedef struct {
 	char* 		name; 	// the name of this option
 	char** 		options; 	//dashed option name and alternatives
 	unsigned int 	optionscount; 	// count of option alternatives
@@ -13,19 +13,20 @@ struct Option {
 	
 	char** 		values; 	// values
 	unsigned int 	valuecount; 	// size of the values, if more than one...
-	bool 		set; 		// boolean if this option has been set
-};
+	char 		set; 		// boolean if this option has been set
+} Option;
 
-struct CONode {
-	CONode* prev;
-	CONode* next;
+
+typedef struct _CONode {
+	//CONode* prev;
+	struct _CONode* next;
 	Option* option;
-};
+} CONode;
 
-struct CmdOptions {
-	bool 		init;
+typedef struct  {
+	char 		init;
 	CONode*  	options;
-};
+} CmdOptions;
 
 /*
  * Main structure
@@ -62,7 +63,7 @@ int CmdOptions_AddDescription(char* name, char* description);
 /**
  * Check if the option specified by name is set.
  */
-bool 	CmdOptions_IsSet(char* name);
+int 	CmdOptions_IsSet(char* name);
 /**
  * Get first parameter of the option specified by name.
  */
@@ -85,5 +86,7 @@ double 	CmdOptions_GetDouble(char* name);
  */
 int 	CmdOptions_GetAll(char* name, char** values, unsigned int* count);
 
+int 	CmdOptions_Create(char* name);
+CONode* CmdOptions_NodeGet(char* name);
 #endif
 
