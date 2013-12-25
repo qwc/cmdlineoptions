@@ -1,7 +1,6 @@
 #ifndef CMDLINEOPTIONS_H
 #define CMDLINEOPTIONS_H
 
-
 struct Option {
 	char* 		name; 	// the name of this option
 	char** 		options; 	//dashed option name and alternatives
@@ -17,10 +16,21 @@ struct Option {
 	bool 		set; 		// boolean if this option has been set
 };
 
+struct CONode {
+	CONode* prev;
+	CONode* next;
+	Option* option;
+};
+
 struct CmdOptions {
 	bool 		init;
-	Option** 	options;
+	CONode*  	options;
 };
+
+/*
+ * Main structure
+ */
+extern CmdOptions cmdoptions;
 
 /** Init function dummy.
  */
