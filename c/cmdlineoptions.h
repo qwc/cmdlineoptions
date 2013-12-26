@@ -88,5 +88,6 @@ int 	CmdOptions_GetAll(char* name, char** values, unsigned int* count);
 
 int 	CmdOptions_Create(char* name);
 CONode* CmdOptions_NodeGet(char* name);
+void  CmdOptions_AddElement(char** target, char* element);
 #endif
 
