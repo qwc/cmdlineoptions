@@ -1,15 +1,15 @@
 
 
-all: build static dynamic
+all: build static-lib dynamic-lib
 
 build:
 	gcc -c cmdlineoptions.c
 	
-static: build
+static-lib: build
 	ar cq libcmdlineoptions.a cmdlineoptions.o
 	
 	
-dynamic:
+dynamic-lib:
 	gcc -c -fPIC -o cmdlineoptions-static.o cmdlineoptions.c
 	ld -G cmdlineoptions-static.o -o libcmdlineoptions.so
 
