@@ -1,18 +1,29 @@
 #include "cmdlineoptions.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 CmdOptions cmdoptions;
 
-void CmdOptions_Init() {
+void CmdOptions_Init(char addhelp){
+	CmdOptions_InitCmd(addhelp,0);
+}
+
+void CmdOptions_InitCmd(char addhelp, char cmdchar) {
 	if (cmdoptions.init == 0) {
 		cmdoptions.init = 1;
+		if (cmdchar != 0)
+			cmdoptions.cmdchar = cmdchar;
+		else
+			cmdoptions.cmdchar = '-';
 		// do we have to init something?
 		// add the help option
-		CmdOptions_Add("help", "--help");
-		CmdOptions_Add("help", "-h");
-		CmdOptions_Add("help", "-?");
-		CmdOptions_AddDescription("help", "Display the help text.");
+		if (addhelp != 0) {
+			CmdOptions_Add("help", "--help");
+			CmdOptions_Add("help", "-h");
+			CmdOptions_Add("help", "-?");
+			CmdOptions_AddDescription("help", "Display the help text.");
+		}
 	}
 }
 
@@ -59,8 +70,67 @@ CONode* CmdOptions_NodeGet(char* name) {
 	return 0;
 }
 
-int CmdOptions_Parse(int argc, char** argv) {
+CONode* CmdOptions_SearchNode(char* cmdlineargument) {
+	if (cmdoptions.options != 0) {
+		CONode* node = cmdoptions.options;
+		while (node != 0) {
+			int i = 0;
+			for (; i < node->option->optionscount; ++i) {
+				if (strcmp(node->option->options[i], cmdlineargument) == 0) {
+					return node;
+				}
+			}
+			node = node->next;
+		}
+	}
+	return 0;
+}
 
+int CmdOptions_Parse(int argc, char** argv) {
+	if (argc > 1) {
+		int i = 1;
+		CONode* cnode = 0;
+		char* carg = 0;
+		;
+		for (; i < argc; ++i) {
+			if (argv[i][0] == cmdoptions.cmdchar) {
+				if ((cnode = CmdOptions_SearchNode(argv[i])) != 0) {
+					cnode->option->set = 1;
+				} else {
+					carg = argv[i];
+					fprintf(stderr, "CmdLineOptions: Unrecognized option '%s'.",
+							carg);
+				}
+			}
+			if (cnode != 0) {
+				if (cnode->option->possibleparametercount == 0) {
+					CmdOptions_AddElement(cnode->option->values,
+							&(cnode->option->valuecount), argv[i]);
+				} else {
+					int j = 0;
+					for (; j < cnode->option->possibleparametercount; ++j) {
+						if (strcmp(argv[i],
+								cnode->option->possibleparameters[j]) == 0) {
+							CmdOptions_AddElement(cnode->option->values,
+									&(cnode->option->valuecount), argv[i]);
+							break;
+						}
+					}
+					if (cnode->option->possibleparametercount == j) {
+						fprintf(stderr,
+								"CmdLineOptions: Parameter '%s' is not allowed, parameter not added.",
+								argv[i]);
+					}
+				}
+			} else {
+				fprintf(stderr,
+						"CmdLineOptions: Unrecognized option parameter '%s' for unrecognized option '%s'.",
+						argv[i], carg);
+			}
+		}
+	}
+	// no arguments!
+	return 1;
 }
 
 void CmdOptions_Add(char* name, char* option) {
@@ -107,12 +177,12 @@ long CmdOptions_GetLong(char* name) {
 }
 
 double CmdOptions_GetDouble(char* name) {
-	return atod(CmdOptions_Get(name));
+	return atof(CmdOptions_Get(name));
 }
 
 int CmdOptions_GetAll(char* name, char** values, unsigned int* count) {
 	CONode* node = CmdOptions_Create(name);
-	if(node == 0)
+	if (node == 0)
 		return 1;
 	values = node->option->values;
 	*count = node->option->valuecount;

@@ -26,21 +26,24 @@ typedef struct _CONode {
 typedef struct _CmdOptions {
 	char 		init;
 	CONode*  	options;
+	char		cmdchar;
 } CmdOptions;
 
-/*
+/**
  * Main structure
  */
 extern CmdOptions cmdoptions;
 
-/** Init function dummy.
+/** Init function.
  */
-void CmdOptions_Init();
+void CmdOptions_InitCmd(char addhelp, char cmdchar);
+void CmdOptions_Init(char addhelp);
 
 /**
  * The heart of this whole thing, the parsing of all options...
  */
 int CmdOptions_Parse(int argc, char** argv);
+CONode* CmdOptions_SearchNode(char* cmdlineargument);
 
 /**
  * Add a new option with a new name, or a new option alternative to an existing one.

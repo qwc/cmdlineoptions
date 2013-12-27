@@ -1,6 +1,6 @@
 
 
-all: build static-lib dynamic-lib
+all: build static-lib dynamic-lib example
 
 build:
 	gcc -c cmdlineoptions.c
@@ -15,4 +15,8 @@ dynamic-lib:
 
 
 clean:
-	rm -f *.o *.a *.so
+	rm -f *.o *.a *.so example
+	
+	
+example:
+	gcc -ggdb example.c -o example libcmdlineoptions.a
