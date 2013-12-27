@@ -1,7 +1,7 @@
 #ifndef CMDLINEOPTIONS_H
 #define CMDLINEOPTIONS_H
 
-typedef struct {
+typedef struct _Option {
 	char* 		name; 	// the name of this option
 	char** 		options; 	//dashed option name and alternatives
 	unsigned int 	optionscount; 	// count of option alternatives
@@ -23,7 +23,7 @@ typedef struct _CONode {
 	Option* option;
 } CONode;
 
-typedef struct  {
+typedef struct _CmdOptions {
 	char 		init;
 	CONode*  	options;
 } CmdOptions;
