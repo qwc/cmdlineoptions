@@ -45,20 +45,20 @@ int CmdOptions_Parse(int argc, char** argv);
 /**
  * Add a new option with a new name, or a new option alternative to an existing one.
  */
-int CmdOptions_Add(char* name, char* option);
+void CmdOptions_Add(char* name, char* option);
 /**
  * Add a defaultparameter to an existing option, specified by name.
  */
-int CmdOptions_AddDefaultParameter(char* name, char* defaultparameter);
+void CmdOptions_AddDefaultParameter(char* name, char* defaultparameter);
 /**
  * Add a possible parameter to an existing option, specified by name.
  * Keep in mind that you LIMIT that option to all possible parameters (?)
  */
-int CmdOptions_AddPossibleParameter(char* name, char* possibleParameter);
+void CmdOptions_AddPossibleParameter(char* name, char* possibleParameter);
 /**
  * Add a description to an existing option, specified by name.
  */
-int CmdOptions_AddDescription(char* name, char* description);
+void CmdOptions_AddDescription(char* name, char* description);
 
 /**
  * Check if the option specified by name is set.
@@ -86,8 +86,8 @@ double 	CmdOptions_GetDouble(char* name);
  */
 int 	CmdOptions_GetAll(char* name, char** values, unsigned int* count);
 
-int 	CmdOptions_Create(char* name);
+CONode*	CmdOptions_Create(char* name);
 CONode* CmdOptions_NodeGet(char* name);
-void  CmdOptions_AddElement(char** target, char* element);
+void  CmdOptions_AddElement(char** target,int* counter, char* element);
 #endif
 
