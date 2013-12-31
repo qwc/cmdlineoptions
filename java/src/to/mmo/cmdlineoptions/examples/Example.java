@@ -26,7 +26,7 @@ public class Example {
 														// few among us...
 		CmdOptions
 				.i()
-				.createOption("name")
+				.createOption("complex")
 				.addCommand("--complex")
 				// see above
 				// yes you can omit a default parameter, but you have to
