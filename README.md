@@ -14,6 +14,8 @@ Currently available as:
 It supports single dashed options like "-h", double dashed options "--help" and additional option alternatives.
 It has got automatic help handling of all configured options with "-h", "--help" and "-?".
 
+In the end you can define your own commandline parameter style, because you define the option name yourself like 'CmdOptions.create("-myoption");' or '...create("+anotheropt")', etc.
+
 The library - or better, the libraries - are planned to be consistent over all languages, so you are able to define and check and retrieve options with similar function calls.
 
 Current work and future plans
@@ -21,7 +23,7 @@ Current work and future plans
 
 Working on:
 - JUnit tests
-- Java: refactoring
+- Java: refactoring [done]
 - Java: better errorhandling
 - Java: Examples
 - C version
