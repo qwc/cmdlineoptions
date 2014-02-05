@@ -5,8 +5,8 @@
 
 CmdOptions cmdoptions;
 
-void CmdOptions_Init(char addhelp){
-	CmdOptions_InitCmd(addhelp,0);
+void CmdOptions_Init(char addhelp) {
+	CmdOptions_InitCmd(addhelp, 0);
 }
 
 void CmdOptions_InitCmd(char addhelp, char cmdchar) {
@@ -71,13 +71,20 @@ CONode* CmdOptions_NodeGet(char* name) {
 }
 
 CONode* CmdOptions_SearchNode(char* cmdlineargument) {
+	printf("searching\n");
 	if (cmdoptions.options != 0) {
+		printf("searching further\n");
 		CONode* node = cmdoptions.options;
 		while (node != 0) {
-			int i = 0;
-			for (; i < node->option->optionscount; ++i) {
-				if (strcmp(node->option->options[i], cmdlineargument) == 0) {
-					return node;
+			if (node->option->optionscount > 0) {
+				printf("searching more! %d \n",node->option->optionscount);
+				int i = 0;
+				for (; i < node->option->optionscount; ++i) {
+					printf("addresses 0x%x 0x%x\n",node->option->options, node->option->options[i]);
+					if (strcmp(node->option->options[i], cmdlineargument)
+							== 0) {
+						return node;
+					}
 				}
 			}
 			node = node->next;
@@ -104,14 +111,14 @@ int CmdOptions_Parse(int argc, char** argv) {
 			}
 			if (cnode != 0) {
 				if (cnode->option->possibleparametercount == 0) {
-					CmdOptions_AddElement(cnode->option->values,
+					CmdOptions_AddElement(&cnode->option->values,
 							&(cnode->option->valuecount), argv[i]);
 				} else {
 					int j = 0;
 					for (; j < cnode->option->possibleparametercount; ++j) {
 						if (strcmp(argv[i],
 								cnode->option->possibleparameters[j]) == 0) {
-							CmdOptions_AddElement(cnode->option->values,
+							CmdOptions_AddElement(&cnode->option->values,
 									&(cnode->option->valuecount), argv[i]);
 							break;
 						}
@@ -135,19 +142,19 @@ int CmdOptions_Parse(int argc, char** argv) {
 
 void CmdOptions_Add(char* name, char* option) {
 	CONode* node = CmdOptions_Create(name);
-	CmdOptions_AddElement(node->option->options, &(node->option->optionscount),
+	CmdOptions_AddElement(&node->option->options, &(node->option->optionscount),
 			option);
 }
 
 void CmdOptions_AddDefaultParameter(char* name, char* defaultparameter) {
 	CONode* node = CmdOptions_Create(name);
-	CmdOptions_AddElement(node->option->defaultparameters,
+	CmdOptions_AddElement(&node->option->defaultparameters,
 			&(node->option->defaultparametercount), defaultparameter);
 }
 
 void CmdOptions_AddPossibleParameter(char* name, char* possibleParameter) {
 	CONode* node = CmdOptions_Create(name);
-	CmdOptions_AddElement(node->option->possibleparameters,
+	CmdOptions_AddElement(&node->option->possibleparameters,
 			&(node->option->possibleparametercount), possibleParameter);
 }
 
@@ -189,15 +196,15 @@ int CmdOptions_GetAll(char* name, char** values, unsigned int* count) {
 	return 0;
 }
 
-void CmdOptions_AddElement(char** target, int* counter, char* element) {
+void CmdOptions_AddElement(char*** target, int* counter, char* element) {
 	int cnt = *counter;
 	char** old = 0;
 	if (target != 0)
-		old = target;
-	target = malloc((cnt + 1) * sizeof(char*));
+		old = *target;
+	*target = malloc((cnt + 1) * sizeof(char*));
 	if (old != 0)
 		memcpy(target, old, (cnt) * sizeof(char*));
-	target[cnt] = element;
+	(*target)[cnt] = element;
 	if (old != 0)
 		free(old);
 	*counter = cnt + 1;
