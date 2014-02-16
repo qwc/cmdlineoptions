@@ -1,3 +1,15 @@
+Ever thought about learning a new programming language, doing your first try with a command line program, and first of all you want to have some command line options?
+Maybe you have just an idea to do some difficult task in a small command line program, and of course you need options...
+
+... but most of the time you have to reinvent the wheel?!
+
+Why not using a small and easy library, which does exactly THAT task? Which gives you the possibility to fully concentrate on the original task to be done and developed?
+
+
+
+This is the goal of this project.
+
+
 cmdlineoptions
 ===============
 
