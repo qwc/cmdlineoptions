@@ -5,11 +5,11 @@
 
 CmdOptions cmdoptions;
 
-void CmdOptions_Init(char addhelp) {
-	CmdOptions_InitCmd(addhelp, 0);
+void CmdLO_Init(char addhelp) {
+	CmdLO_InitCmd(addhelp, 0);
 }
 
-void CmdOptions_InitCmd(char addhelp, char cmdchar) {
+void CmdLO_InitCmd(char addhelp, char cmdchar) {
 	if (cmdoptions.init == 0) {
 		cmdoptions.init = 1;
 		if (cmdchar != 0)
@@ -19,16 +19,16 @@ void CmdOptions_InitCmd(char addhelp, char cmdchar) {
 		// do we have to init something?
 		// add the help option
 		if (addhelp != 0) {
-			CmdOptions_Add("help", "--help");
-			CmdOptions_Add("help", "-h");
-			CmdOptions_Add("help", "-?");
-			CmdOptions_AddDescription("help", "Display the help text.");
+			CmdLO_Add("help", "--help");
+			CmdLO_Add("help", "-h");
+			CmdLO_Add("help", "-?");
+			CmdLO_AddDescription("help", "Display the help text.");
 		}
 	}
 }
 
-CONode* CmdOptions_Create(char* name) {
-	CONode* node = CmdOptions_NodeGet(name);
+CONode* CmdLO_Create(char* name) {
+	CONode* node = CmdLO_NodeGet(name);
 	if (node == 0) {
 		node = malloc(sizeof(CONode));
 		if (cmdoptions.options == 0) {
@@ -57,7 +57,7 @@ CONode* CmdOptions_Create(char* name) {
 	return node;
 }
 
-CONode* CmdOptions_NodeGet(char* name) {
+CONode* CmdLO_NodeGet(char* name) {
 	if (cmdoptions.options != 0) {
 		CONode* node = cmdoptions.options;
 		while (node != 0) {
@@ -70,17 +70,14 @@ CONode* CmdOptions_NodeGet(char* name) {
 	return 0;
 }
 
-CONode* CmdOptions_SearchNode(char* cmdlineargument) {
-	printf("searching\n");
+CONode* CmdLO_SearchNode(char* cmdlineargument) {
 	if (cmdoptions.options != 0) {
-		printf("searching further\n");
 		CONode* node = cmdoptions.options;
 		while (node != 0) {
 			if (node->option->optionscount > 0) {
-				printf("searching more! %d \n",node->option->optionscount);
 				int i = 0;
 				for (; i < node->option->optionscount; ++i) {
-					printf("addresses 0x%x 0x%x\n",node->option->options, node->option->options[i]);
+					//printf("addresses 0x%x 0x%x\n",node->option->options, node->option->options[i]);
 					if (strcmp(node->option->options[i], cmdlineargument)
 							== 0) {
 						return node;
@@ -93,7 +90,7 @@ CONode* CmdOptions_SearchNode(char* cmdlineargument) {
 	return 0;
 }
 
-int CmdOptions_Parse(int argc, char** argv) {
+int CmdLO_Parse(int argc, char** argv) {
 	if (argc > 1) {
 		int i = 1;
 		CONode* cnode = 0;
@@ -101,8 +98,9 @@ int CmdOptions_Parse(int argc, char** argv) {
 		;
 		for (; i < argc; ++i) {
 			if (argv[i][0] == cmdoptions.cmdchar) {
-				if ((cnode = CmdOptions_SearchNode(argv[i])) != 0) {
+				if ((cnode = CmdLO_SearchNode(argv[i])) != 0) {
 					cnode->option->set = 1;
+					continue;
 				} else {
 					carg = argv[i];
 					fprintf(stderr, "CmdLineOptions: Unrecognized option '%s'.",
@@ -111,14 +109,14 @@ int CmdOptions_Parse(int argc, char** argv) {
 			}
 			if (cnode != 0) {
 				if (cnode->option->possibleparametercount == 0) {
-					CmdOptions_AddElement(&cnode->option->values,
+					CmdLO_AddElement(&(cnode->option->values),
 							&(cnode->option->valuecount), argv[i]);
 				} else {
 					int j = 0;
 					for (; j < cnode->option->possibleparametercount; ++j) {
 						if (strcmp(argv[i],
 								cnode->option->possibleparameters[j]) == 0) {
-							CmdOptions_AddElement(&cnode->option->values,
+							CmdLO_AddElement(&(cnode->option->values),
 									&(cnode->option->valuecount), argv[i]);
 							break;
 						}
@@ -136,59 +134,112 @@ int CmdOptions_Parse(int argc, char** argv) {
 			}
 		}
 	}
+	// parsing done or no arguments -> display help text
+	if (CmdLO_IsSet("help") > 0 || argc == 0) {
+		// iterate through the list
+		printf("-options\n");
+		CONode* node = cmdoptions.options;
+		unsigned int i = 0;
+		while (node != 0) {
+			printf("\t%s\t(", node->option->name);
+			for (i = 0; i < node->option->optionscount; ++i) {
+				printf("%s", node->option->options[i]);
+				if (i < node->option->optionscount - 1) {
+					printf(", ");
+				}
+			}
+			printf("): default=[");
+			for (i = 0; i < node->option->defaultparametercount; ++i) {
+				printf("\"%s\"", node->option->defaultparameters[i]);
+				if (i < node->option->defaultparametercount - 1) {
+					printf(", ");
+				}
+			}
+			printf("]\n");
+			printf("\t\t%s\n", node->option->description);
+			if (node->option->possibleparametercount > 0) {
+				printf("(possible parameters:");
+				for (i = 0; i < node->option->possibleparametercount; ++i) {
+					printf("\"%s\"", node->option->possibleparameters[i]);
+					if (i < node->option->possibleparametercount - 1) {
+						printf(", ");
+					}
+				}
+				printf(")\n");
+			}
+			if (node->option->set > 0) {
+				if (node->option->valuecount > 0) {
+					printf("\t\t->> current value: ");
+					for (i = 0; i < node->option->valuecount; ++i) {
+						printf("\"%s\"", node->option->values[i]);
+						if (i < node->option->valuecount - 1) {
+							printf(", ");
+						}
+					}
+				} else {
+					printf("\t\t->> is set!");
+				}
+				printf("\n");
+			}
+			if (node->next != 0)
+				printf("\n");
+			node = node->next;
+		}
+		printf("/options");
+	}
 	// no arguments!
 	return 1;
 }
 
-void CmdOptions_Add(char* name, char* option) {
-	CONode* node = CmdOptions_Create(name);
-	CmdOptions_AddElement(&node->option->options, &(node->option->optionscount),
+void CmdLO_Add(char* name, char* option) {
+	CONode* node = CmdLO_Create(name);
+	CmdLO_AddElement(&(node->option->options), &(node->option->optionscount),
 			option);
 }
 
-void CmdOptions_AddDefaultParameter(char* name, char* defaultparameter) {
-	CONode* node = CmdOptions_Create(name);
-	CmdOptions_AddElement(&node->option->defaultparameters,
+void CmdLO_AddDefaultParameter(char* name, char* defaultparameter) {
+	CONode* node = CmdLO_Create(name);
+	CmdLO_AddElement(&(node->option->defaultparameters),
 			&(node->option->defaultparametercount), defaultparameter);
 }
 
-void CmdOptions_AddPossibleParameter(char* name, char* possibleParameter) {
-	CONode* node = CmdOptions_Create(name);
-	CmdOptions_AddElement(&node->option->possibleparameters,
+void CmdLO_AddPossibleParameter(char* name, char* possibleParameter) {
+	CONode* node = CmdLO_Create(name);
+	CmdLO_AddElement(&(node->option->possibleparameters),
 			&(node->option->possibleparametercount), possibleParameter);
 }
 
-void CmdOptions_AddDescription(char* name, char* description) {
-	CONode* node = CmdOptions_Create(name);
+void CmdLO_AddDescription(char* name, char* description) {
+	CONode* node = CmdLO_Create(name);
 	node->option->description = description;
 }
 
-int CmdOptions_IsSet(char* name) {
-	CONode* node = CmdOptions_Create(name);
+int CmdLO_IsSet(char* name) {
+	CONode* node = CmdLO_Create(name);
 	return node->option->set;
 }
 
-char* CmdOptions_Get(char* name) {
-	CONode* node = CmdOptions_Create(name);
-	if (CmdOptions_IsSet(name) && node->option->valuecount > 0)
+char* CmdLO_Get(char* name) {
+	CONode* node = CmdLO_Create(name);
+	if (CmdLO_IsSet(name) && node->option->valuecount > 0)
 		return node->option->values[0];
 	return 0;
 }
 
-int CmdOptions_GetInt(char* name) {
-	return atoi(CmdOptions_Get(name));
+int CmdLO_GetInt(char* name) {
+	return atoi(CmdLO_Get(name));
 }
 
-long CmdOptions_GetLong(char* name) {
-	return atol(CmdOptions_Get(name));
+long CmdLO_GetLong(char* name) {
+	return atol(CmdLO_Get(name));
 }
 
-double CmdOptions_GetDouble(char* name) {
-	return atof(CmdOptions_Get(name));
+double CmdLO_GetDouble(char* name) {
+	return atof(CmdLO_Get(name));
 }
 
-int CmdOptions_GetAll(char* name, char** values, unsigned int* count) {
-	CONode* node = CmdOptions_Create(name);
+int CmdLO_GetAll(char* name, char** values, unsigned int* count) {
+	CONode* node = CmdLO_Create(name);
 	if (node == 0)
 		return 1;
 	values = node->option->values;
@@ -196,15 +247,15 @@ int CmdOptions_GetAll(char* name, char** values, unsigned int* count) {
 	return 0;
 }
 
-void CmdOptions_AddElement(char*** target, int* counter, char* element) {
-	int cnt = *counter;
+void CmdLO_AddElement(char*** target, unsigned int* counter, char* element) {
+	unsigned int cnt = *counter;
 	char** old = 0;
-	if (target != 0)
+	if (*target != 0)
 		old = *target;
 	*target = malloc((cnt + 1) * sizeof(char*));
 	if (old != 0)
-		memcpy(target, old, (cnt) * sizeof(char*));
-	(*target)[cnt] = element;
+		memcpy(*target, old, (cnt) * sizeof(char*));
+	*(*target + cnt) = element;
 	if (old != 0)
 		free(old);
 	*counter = cnt + 1;

@@ -1,16 +1,16 @@
 #include "cmdlineoptions.h"
 
 void configureOptions() {
-	CmdOptions_Init(1);
-	CmdOptions_Add("test","--test");
-	CmdOptions_Add("test","-t");
-	CmdOptions_AddDescription("test","This is a test Option.");
+	CmdLO_Init(1);
+	CmdLO_Add("test","--test");
+	CmdLO_Add("test","-t");
+	CmdLO_AddDescription("test", "This is a test Option.");
 
 }
 
 int main(int argc, char** argv) {
 	configureOptions();
-	CmdOptions_Parse(argc,argv);
+	CmdLO_Parse(argc,argv);
 
 }
 

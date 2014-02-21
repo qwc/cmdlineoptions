@@ -3,15 +3,15 @@
 all: build static-lib dynamic-lib example
 
 build:
-	gcc -c cmdlineoptions.c
+	gcc -c -g cmdlineoptions.c
 	
 static-lib: build
 	ar cq libcmdlineoptions.a cmdlineoptions.o
 	
 	
 dynamic-lib:
-	gcc -c -fPIC -o cmdlineoptions-static.o cmdlineoptions.c
-	ld -G cmdlineoptions-static.o -o libcmdlineoptions.so
+	gcc -c -fPIC -g -o cmdlineoptions-dynamic.o cmdlineoptions.c
+	ld -G cmdlineoptions-dynamic.o -o libcmdlineoptions.so
 
 
 clean:
@@ -19,4 +19,5 @@ clean:
 	
 	
 example:
-	gcc -ggdb example.c -o example libcmdlineoptions.a
+	gcc -I. -g example.c -o example-shared -L. -lcmdlineoptions
+	gcc -g example.c -o example-static libcmdlineoptions.a

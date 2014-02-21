@@ -36,61 +36,61 @@ extern CmdOptions cmdoptions;
 
 /** Init function.
  */
-void CmdOptions_InitCmd(char addhelp, char cmdchar);
-void CmdOptions_Init(char addhelp);
+void CmdLO_InitCmd(char addhelp, char cmdchar);
+void CmdLO_Init(char addhelp);
 
 /**
  * The heart of this whole thing, the parsing of all options...
  */
-int CmdOptions_Parse(int argc, char** argv);
-CONode* CmdOptions_SearchNode(char* cmdlineargument);
+int CmdLO_Parse(int argc, char** argv);
+CONode* CmdLO_SearchNode(char* cmdlineargument);
 
 /**
  * Add a new option with a new name, or a new option alternative to an existing one.
  */
-void CmdOptions_Add(char* name, char* option);
+void CmdLO_Add(char* name, char* option);
 /**
  * Add a defaultparameter to an existing option, specified by name.
  */
-void CmdOptions_AddDefaultParameter(char* name, char* defaultparameter);
+void CmdLO_AddDefaultParameter(char* name, char* defaultparameter);
 /**
  * Add a possible parameter to an existing option, specified by name.
  * Keep in mind that you LIMIT that option to all possible parameters (?)
  */
-void CmdOptions_AddPossibleParameter(char* name, char* possibleParameter);
+void CmdLO_AddPossibleParameter(char* name, char* possibleParameter);
 /**
  * Add a description to an existing option, specified by name.
  */
-void CmdOptions_AddDescription(char* name, char* description);
+void CmdLO_AddDescription(char* name, char* description);
 
 /**
  * Check if the option specified by name is set.
  */
-int 	CmdOptions_IsSet(char* name);
+int 	CmdLO_IsSet(char* name);
 /**
  * Get first parameter of the option specified by name.
  */
-char* 	CmdOptions_Get(char* name);
+char* 	CmdLO_Get(char* name);
 /**
  * Get the first parameter of the option specified by name as integer.
  */
-int 	CmdOptions_GetInt(char* name);
+int 	CmdLO_GetInt(char* name);
 /**
  * Get the first parameter of the option specified by name as long.
  */
-long 	CmdOptions_GetLong(char* name);
+long 	CmdLO_GetLong(char* name);
 /**
  * Get the first parameter of the option specified by name as double.
  */
-double 	CmdOptions_GetDouble(char* name);
+double 	CmdLO_GetDouble(char* name);
 /**
  * Get all parameters of the given option name as string array.
  * This is the 'Do It Yourself' retrieve function.
  */
-int 	CmdOptions_GetAll(char* name, char** values, unsigned int* count);
+int 	CmdLO_GetAll(char* name, char** values, unsigned int* count);
 
-CONode*	CmdOptions_Create(char* name);
-CONode* CmdOptions_NodeGet(char* name);
-void  CmdOptions_AddElement(char*** target,int* counter, char* element);
+CONode*	CmdLO_Create(char* name);
+CONode* CmdLO_NodeGet(char* name);
+void  CmdLO_AddElement(char*** target,unsigned int* counter, char* element);
 #endif
 
