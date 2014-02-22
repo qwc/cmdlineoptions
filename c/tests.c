@@ -23,7 +23,26 @@ void configureDefaultSet(){
 
 
 int main(int argc, char** argv) {
+	// configure the options
+	configureDefaultSet();
 
+	// emulate parameters
+	int myargc = 0;
+	char** myargv = 0;
+
+	// test 1 parse nothing.
+	CmdLO_Parse(myargc,myargv);
+
+	// check contents...
+
+
+	// test 2 parse everything
+
+
+	// test 3 parse something
+
+
+	// test 4 producing some errors...
 
 
 	return 0;

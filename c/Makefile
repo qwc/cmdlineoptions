@@ -1,6 +1,6 @@
 
 
-all: build static-lib dynamic-lib example
+all: build static-lib dynamic-lib example compile-tests
 
 build:
 	gcc -c -g cmdlineoptions.c
@@ -21,3 +21,12 @@ clean:
 example:
 	gcc -I. -g example.c -o example-shared -L. -lcmdlineoptions
 	gcc -g example.c -o example-static libcmdlineoptions.a
+	
+	
+compile-tests:
+	gcc -I. -g tests.c -o tests-shared -L. -lcmdlineoptions
+	gcc tests.c -o tests-static libcmdlineoptions.a
+	
+test:
+	LD_LIBRARY_PATH="." tests-shared
+	tests-static
