@@ -158,7 +158,7 @@ int CmdLO_Parse(int argc, char** argv) {
 			printf("]\n");
 			printf("\t\t%s\n", node->option->description);
 			if (node->option->possibleparametercount > 0) {
-				printf("(possible parameters:");
+				printf("\t\t(possible parameters:");
 				for (i = 0; i < node->option->possibleparametercount; ++i) {
 					printf("\"%s\"", node->option->possibleparameters[i]);
 					if (i < node->option->possibleparametercount - 1) {
@@ -185,7 +185,7 @@ int CmdLO_Parse(int argc, char** argv) {
 				printf("\n");
 			node = node->next;
 		}
-		printf("/options");
+		printf("/options\n");
 	}
 	// no arguments!
 	return 1;
@@ -281,8 +281,8 @@ void CmdLO_Destroy() {
 		if (node->option->possibleparametercount > 0) {
 			i = 0;
 			for (; i < node->option->possibleparametercount; ++i)
-				free(node->option->possibleparametercount[i]);
-			free(node->option->possibleparametercount);
+				free(node->option->possibleparameters[i]);
+			free(node->option->possibleparameters);
 		}
 		if (node->option->valuecount > 0) {
 			i = 0;
