@@ -124,6 +124,7 @@ int CmdLO_Parse(int argc, char** argv) {
 						}
 					}
 					if (cnode->option->possibleparametercount == j) {
+						cnode->option->set = 0;
 						fprintf(stderr,
 								"CmdLineOptions: Parameter '%s' is not allowed, parameter not added.\n",
 								argv[i]);
