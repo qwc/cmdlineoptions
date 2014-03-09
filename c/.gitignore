@@ -2,3 +2,5 @@
 *.so
 *.a
 /example
+/tests-shared
+/tests-static
