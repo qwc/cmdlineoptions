@@ -260,3 +260,40 @@ void CmdLO_AddElement(char*** target, unsigned int* counter, char* element) {
 		free(old);
 	*counter = cnt + 1;
 }
+
+void CmdLO_Destroy() {
+	// free everything inside the structures and then the whole tree
+	CONode * node = cmdoptions.options;
+	int i = 0;
+	while (node != 0) {
+		if (node->option->optionscount > 0) {
+			i = 0;
+			for (; i < node->option->optionscount; ++i)
+				free(node->option->options[i]);
+			free(node->option->options);
+		}
+		if (node->option->defaultparametercount > 0) {
+			i = 0;
+			for (; i < node->option->defaultparametercount; ++i)
+				free(node->option->defaultparameters[i]);
+			free(node->option->defaultparameters);
+		}
+		if (node->option->possibleparametercount > 0) {
+			i = 0;
+			for (; i < node->option->possibleparametercount; ++i)
+				free(node->option->possibleparametercount[i]);
+			free(node->option->possibleparametercount);
+		}
+		if (node->option->valuecount > 0) {
+			i = 0;
+			for (; i < node->option->valuecount; ++i)
+				free(node->option->values[i]);
+			free(node->option->values);
+		}
+		free(node->option);
+		CONode* old = node;
+		node = node->next;
+		free(old);
+	}
+	cmdoptions.options = 0;
+}

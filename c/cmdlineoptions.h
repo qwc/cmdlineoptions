@@ -88,9 +88,23 @@ double 	CmdLO_GetDouble(char* name);
  * This is the 'Do It Yourself' retrieve function.
  */
 int 	CmdLO_GetAll(char* name, char** values, unsigned int* count);
-
+/**
+ * Get the node with the given name or create a new one with that name.
+ */
 CONode*	CmdLO_Create(char* name);
+/**
+ * Just get the node with the given name.
+ */
 CONode* CmdLO_NodeGet(char* name);
+/**
+ * Convenience function to add a string to a string array.
+ */
 void  CmdLO_AddElement(char*** target,unsigned int* counter, char* element);
+/**
+ * Clean up everything, like nothing ever happened...
+ */
+void CmdLO_Destroy();
+
+
 #endif
 
