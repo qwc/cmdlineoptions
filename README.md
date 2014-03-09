@@ -19,7 +19,7 @@ Currently available as:
 - java
   - Currently available just as a Java class, within an eclipse project. :)
 - C
-  - ... not ... quite ... ready ... 
+  - static/shared library 
 - (C++ maybe coming soon...)
 - maybe other languages in the future?
 
@@ -35,12 +35,11 @@ Current work and future plans
 
 Working on:
 - JUnit tests
-- Java: refactoring [done]
 - Java: better errorhandling
 - Java: Examples
-- C version
+- C version [done]
 - Getting started
 
 Future plans:
- - C++ version
- - ... 
+ - C++ class version
+ - ...
