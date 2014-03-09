@@ -1,6 +1,6 @@
 
 
-all: build static-lib dynamic-lib example compile-tests
+all: build static-lib dynamic-lib example compile-tests test
 
 build:
 	gcc -c -g cmdlineoptions.c
@@ -15,7 +15,7 @@ dynamic-lib:
 
 
 clean:
-	rm -f *.o *.a *.so example
+	rm -f *.o *.a *.so example-shared example-static tests-shared tests-static
 	
 	
 example:
@@ -28,5 +28,13 @@ compile-tests:
 	gcc tests.c -o tests-static libcmdlineoptions.a
 	
 test:
-	LD_LIBRARY_PATH="." tests-shared
-	tests-static
+	LD_LIBRARY_PATH="." ./tests-shared
+	./tests-static
+	
+	
+install:
+	cp libcmdlineoptions.so /usr/lib/
+	cp libcmdlineoptions.a /usr/lib/
+	
+uninstall:
+	rm /usr/lib/libcmdlineoptions.*
