@@ -95,7 +95,6 @@ int CmdLO_Parse(int argc, char** argv) {
 		int i = 1;
 		CONode* cnode = 0;
 		char* carg = 0;
-		;
 		for (; i < argc; ++i) {
 			if (argv[i][0] == cmdoptions.cmdchar) {
 				if ((cnode = CmdLO_SearchNode(argv[i])) != 0) {
@@ -103,7 +102,7 @@ int CmdLO_Parse(int argc, char** argv) {
 					continue;
 				} else {
 					carg = argv[i];
-					fprintf(stderr, "CmdLineOptions: Unrecognized option '%s'.",
+					fprintf(stderr, "CmdLineOptions: Unrecognized option '%s'.\n",
 							carg);
 				}
 			}
@@ -123,13 +122,13 @@ int CmdLO_Parse(int argc, char** argv) {
 					}
 					if (cnode->option->possibleparametercount == j) {
 						fprintf(stderr,
-								"CmdLineOptions: Parameter '%s' is not allowed, parameter not added.",
+								"CmdLineOptions: Parameter '%s' is not allowed, parameter not added.\n",
 								argv[i]);
 					}
 				}
 			} else {
 				fprintf(stderr,
-						"CmdLineOptions: Unrecognized option parameter '%s' for unrecognized option '%s'.",
+						"CmdLineOptions: Unrecognized option parameter '%s' for unrecognized option '%s'.\n",
 						argv[i], carg);
 			}
 		}
@@ -297,4 +296,5 @@ void CmdLO_Destroy() {
 		free(old);
 	}
 	cmdoptions.options = 0;
+	cmdoptions.init = 0;
 }
