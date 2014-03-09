@@ -255,7 +255,8 @@ void CmdLO_AddElement(char*** target, unsigned int* counter, char* element) {
 	*target = malloc((cnt + 1) * sizeof(char*));
 	if (old != 0)
 		memcpy(*target, old, (cnt) * sizeof(char*));
-	*(*target + cnt) = element;
+	*(*target + cnt) = malloc(strlen(element) * sizeof(char));
+	memcpy(*(*target + cnt), element, strlen(element));
 	if (old != 0)
 		free(old);
 	*counter = cnt + 1;
