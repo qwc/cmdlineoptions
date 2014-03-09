@@ -77,7 +77,7 @@ CONode* CmdLO_SearchNode(char* cmdlineargument) {
 			if (node->option->optionscount > 0) {
 				int i = 0;
 				for (; i < node->option->optionscount; ++i) {
-					//printf("addresses 0x%x 0x%x\n",node->option->options, node->option->options[i]);
+					//printf("%s %d\n",node->option->options[i], strlen(node->option->options[i])); // debug
 					if (strcmp(node->option->options[i], cmdlineargument)
 							== 0) {
 						return node;
@@ -95,6 +95,7 @@ int CmdLO_Parse(int argc, char** argv) {
 		int i = 1;
 		CONode* cnode = 0;
 		char* carg = 0;
+		char failed = 0;
 		for (; i < argc; ++i) {
 			if (argv[i][0] == cmdoptions.cmdchar) {
 				if ((cnode = CmdLO_SearchNode(argv[i])) != 0) {
@@ -102,8 +103,11 @@ int CmdLO_Parse(int argc, char** argv) {
 					continue;
 				} else {
 					carg = argv[i];
-					fprintf(stderr, "CmdLineOptions: Unrecognized option '%s'.\n",
+					fprintf(stderr,
+							"CmdLineOptions: Unrecognized option '%s'.\n",
 							carg);
+					cnode = 0;
+					continue;
 				}
 			}
 			if (cnode != 0) {
