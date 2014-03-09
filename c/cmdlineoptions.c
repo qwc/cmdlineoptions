@@ -77,7 +77,6 @@ CONode* CmdLO_SearchNode(char* cmdlineargument) {
 			if (node->option->optionscount > 0) {
 				int i = 0;
 				for (; i < node->option->optionscount; ++i) {
-					//printf("%s %d\n",node->option->options[i], strlen(node->option->options[i])); // debug
 					if (strcmp(node->option->options[i], cmdlineargument)
 							== 0) {
 						return node;
@@ -258,8 +257,8 @@ void CmdLO_AddElement(char*** target, unsigned int* counter, char* element) {
 	*target = malloc((cnt + 1) * sizeof(char*));
 	if (old != 0)
 		memcpy(*target, old, (cnt) * sizeof(char*));
-	*(*target + cnt) = malloc(strlen(element) * sizeof(char));
-	memcpy(*(*target + cnt), element, strlen(element));
+	*(*target + cnt) = malloc((strlen(element) + 1) * sizeof(char));
+	memcpy(*(*target + cnt), element, strlen(element) + 1);
 	if (old != 0)
 		free(old);
 	*counter = cnt + 1;
