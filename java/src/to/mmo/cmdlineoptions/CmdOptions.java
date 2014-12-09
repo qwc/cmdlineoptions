@@ -155,6 +155,10 @@ public class CmdOptions {
 		return o;
 	}
 
+	public String[] get(String name) {
+		return getOption(name);
+	}
+
 	public String[] getOption(String name) {
 		if (options.get(name).values.size() > 0)
 			return options.get(name).values.toArray(new String[0]);
