@@ -30,6 +30,7 @@ public class CmdOptions {
 
 		private ArrayList<String> possibleParams;
 		private boolean set;
+		private boolean required;
 		private ArrayList<String> values;
 		private int maxParameters, minParameters;
 		private ArrayList<String> examples;
@@ -101,6 +102,11 @@ public class CmdOptions {
 
 		public Option setDescription(String description) {
 			this.description = description;
+			return this;
+		}
+
+		public Option setRequired(boolean required) {
+			this.required = true;
 			return this;
 		}
 
@@ -302,47 +308,82 @@ public class CmdOptions {
 		return b.toString();
 	}
 
-	public void parse(String[] args) {
-		// now parse
-		if (args.length > 0) {
-			int i = 0;
-			String arg = null;
-			// iterate through all options
-			for (; i < args.length; ++i) {
-				arg = args[i];
-				Option o = null;
-				// search for correct option
-				for (Option op : options.values()) {
-					for (String s : op.cmd)
-						if (arg.equals(s)) {
-							o = op;
-							break;
-						}
-				}
-				// if it is unknown
-				if (o == null) {
-					System.err.println("Unrecognized option '" + arg + "'");
-					continue;
-				}
-				o.set = true;
-				// now iterate through the parameters
-				int j = i + 1;
-				while (args.length > j && !args[j].startsWith("-")) {
-					if (o.possibleParams.size() > 0) {
-						if (o.possibleParams.contains(args[j]))
-							o.values.add(args[j]);
-						else
-							System.err.println("Parameter \"" + args[j]
-									+ "\" for Option \"" + o.name
-									+ "\" not allowed!");
-					} else {
-						o.values.add(args[j]);
-					}
-					++j;
-				}
-				i = j - 1;
+	private Integer[] getIndices(String[] args) {
+		List<Integer> indices = new ArrayList<Integer>();
+		for (int i = 0; i < args.length; ++i) {
+			if (args[i].startsWith(optionChar)) {
+				indices.add(i);
 			}
 		}
+		return indices.toArray(new Integer[0]);
+	}
+
+	private boolean optionExists(String option) {
+		for (Option o : this.options.values()) {
+			for (String s : o.cmd) {
+				if (option.equals(s)) {
+					return true;
+				}
+			}
+			for (String s : o.cmdLong) {
+				if (option.equals(s)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public void parse(String[] args) {
+		// get indices
+		Integer[] indices = getIndices(args);
+		// check for correct options
+		boolean ok = true;
+		for (Integer i : indices) {
+			String o = args[i].replaceAll(optionChar, "");
+			if (!optionExists(o)) {
+				System.err.println("Unrecognized option '" + o + "'");
+				ok = false;
+			}
+		}
+		// quit if there are unknown options
+		if (!ok) {
+			System.exit(1);
+		}
+		// now parse
+		for (int a = 0; a < indices.length; ++a) {
+			String o = args[indices[a]].replaceAll(optionChar, "");
+			// the option is set!
+			this.getBareOption(o).setSet(true);
+			// are there parameters?
+			if (indices[a] < args.length - 1 && a < indices.length - 1
+					&& indices[a + 1] - indices[a] > 1) {
+				// parameters between options
+				for (int b = indices[a] + 1; b < indices[a + 1]; ++b) {
+					this.getBareOption(o).getValues().add(args[b]);
+				}
+			} else if (a == indices.length - 1 && args.length - 1 > indices[a]) {
+				// parameters at the last option
+				for (int b = indices[a] + 1; b < args.length; ++b) {
+					this.getBareOption(o).getValues().add(args[b]);
+				}
+			}
+		}
+
+		// check for possible parameters
+		for (Option o : options.values()) {
+			for (String s : o.getValues()) {
+				if (!o.possibleParams.contains(s)) {
+					System.err.println("Parameter \"" + s + "\" for Option \""
+							+ o.name + "\" not allowed!");
+					ok = false;
+				}
+			}
+		}
+		if (!ok) {
+			System.exit(2);
+		}
+
 		if (options.get("help").set) {
 			System.out.println(this.toString(true));
 			System.exit(0);
@@ -350,16 +391,15 @@ public class CmdOptions {
 
 		// set default for that options that aren't set
 		for (Option o : options.values()) {
-			if (!o.set && o.defaultParameter != null
-					&& o.defaultParameter.equals("")) {
+			if (!o.set && o.required) {
 				System.err
 						.println(o.name
 								+ " ("
 								+ o.getName()
 								+ "): has no default parameter and has to be set on commandline!");
-				System.exit(1);
+				System.exit(3);
 			}
-			if (!o.set && o.defaultParameter != null)
+			if (!o.set && o.defaultParameter.size() != 0)
 				o.values.addAll(o.defaultParameter);
 		}
 		System.out.println(this.toString(false));
