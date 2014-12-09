@@ -83,6 +83,14 @@ public class CmdOptions {
 			return set;
 		}
 
+		public boolean valuesContains(String value) {
+			return values.contains(value);
+		}
+
+		public int getIndexOf(String value) {
+			return values.indexOf(value);
+		}
+
 		public Option setSet(boolean set) {
 			this.set = set;
 			return this;
