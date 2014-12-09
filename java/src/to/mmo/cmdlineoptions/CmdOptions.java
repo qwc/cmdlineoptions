@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Written by Marcel M. Otte, (c) 2013 For use under the BSD 2-clause License,
@@ -164,6 +165,13 @@ public class CmdOptions {
 			return options.get(name).values.toArray(new String[0]);
 		else if (options.get(name).defaultParameter != null)
 			return options.get(name).getValues().toArray(new String[0]);
+		return null;
+	}
+
+	public List<String> getValuesAsList(String name) {
+		if (options.get(name).getValues().size() > 0) {
+			return options.get(name).getValues();
+		}
 		return null;
 	}
 
