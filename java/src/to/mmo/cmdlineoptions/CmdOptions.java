@@ -17,15 +17,22 @@ public class CmdOptions {
 
 	private static CmdOptions instance;
 
+	private static String optionChar;
+
+	private boolean combineSwitches;
+
 	public static class Option {
 		private String name;
 		private ArrayList<String> cmd;
+		private ArrayList<String> cmdLong;
 		private String description;
 		private ArrayList<String> defaultParameter;
 
 		private ArrayList<String> possibleParams;
 		private boolean set;
 		private ArrayList<String> values;
+		private int maxParameters, minParameters;
+		private ArrayList<String> examples;
 
 		public ArrayList<String> getValues() {
 			return values;
@@ -38,12 +45,23 @@ public class CmdOptions {
 		public Option() {
 			values = new ArrayList<String>();
 			cmd = new ArrayList<String>();
+			cmdLong = new ArrayList<String>();
 			defaultParameter = new ArrayList<String>();
 			possibleParams = new ArrayList<String>();
+			examples = new ArrayList<String>();
 		}
 
 		public Option addCommand(String cmd) {
+			if (cmd.contains(optionChar))
+				cmd.replaceAll(optionChar, "");
 			this.cmd.add(cmd);
+			return this;
+		}
+
+		public Option addLongCommand(String cmd) {
+			if (cmd.contains(optionChar))
+				cmd.replaceAll(optionChar, "");
+			this.cmdLong.add(cmd);
 			return this;
 		}
 
@@ -71,6 +89,12 @@ public class CmdOptions {
 			return this;
 		}
 
+		public Option setParameterCount(int min, int max) {
+			this.minParameters = min;
+			this.maxParameters = max;
+			return this;
+		}
+
 		public String getDescription() {
 			return description;
 		}
@@ -94,6 +118,11 @@ public class CmdOptions {
 
 		public Option setSet(boolean set) {
 			this.set = set;
+			return this;
+		}
+
+		public Option addExample(String example) {
+			this.examples.add(example);
 			return this;
 		}
 
@@ -135,6 +164,8 @@ public class CmdOptions {
 	private HashMap<String, Option> options;
 
 	private CmdOptions() {
+		optionChar = "-";
+		this.setSwitchCombination(false);
 		options = new HashMap<String, Option>();
 		this.createOption("help")
 				.setDescription(
@@ -149,11 +180,29 @@ public class CmdOptions {
 		return instance;
 	}
 
+	public void setSwitchCombination(boolean on) {
+		this.combineSwitches = on;
+	}
+
+	public void setOptionCharacter(String c) {
+		this.optionChar = c;
+	}
+
+	public void setHelpGeneration(boolean on) {
+		if (!on) {
+			options.remove("help");
+		}
+	}
+
 	public Option createOption(String name) {
 		Option o = new Option();
 		o.setName(name);
 		this.options.put(name, o);
 		return o;
+	}
+
+	public Option getBareOption(String name) {
+		return options.get(name);
 	}
 
 	public String[] get(String name) {
@@ -192,6 +241,14 @@ public class CmdOptions {
 		return null;
 	}
 
+	public Integer getOptionAsInt(String name, int index) {
+		Integer[] array = getOptionAsInt(name);
+		if (index >= 0 && index < array.length) {
+			return array[index];
+		}
+		return null;
+	}
+
 	public Double[] getOptionAsDouble(String name) {
 		if (options.get(name).values.size() > 0) {
 			ArrayList<Double> list = new ArrayList<Double>();
@@ -209,17 +266,20 @@ public class CmdOptions {
 		return null;
 	}
 
+	public Double getOptionAsDouble(String name, int index) {
+		Double[] array = getOptionAsDouble(name);
+		if (index >= 0 && index < array.length) {
+			return array[index];
+		}
+		return null;
+	}
+
 	public boolean isSet(String option) {
 		return options.get(option).set;
 	}
 
 	public boolean isSet(String option, String parameter) {
-		for (String o : options.get(option).values) {
-			if (o.equals(parameter)) {
-				return true;
-			}
-		}
-		return false;
+		return this.getValuesAsList(option).contains(parameter);
 	}
 
 	public String toString(boolean help) {
