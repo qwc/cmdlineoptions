@@ -34,6 +34,7 @@ public class CmdOptions {
 		private ArrayList<String> values;
 		private int maxParameters, minParameters;
 		private ArrayList<String> examples;
+		private int stepSizeParameters;
 
 		public ArrayList<String> getValues() {
 			return values;
@@ -53,8 +54,13 @@ public class CmdOptions {
 		}
 
 		public Option addCommand(String cmd) {
-			if (cmd.contains(optionChar))
-				cmd.replaceAll(optionChar, "");
+			if (cmd.contains(optionChar)) {
+				cmd = cmd.replaceAll(optionChar, "");
+			}
+			if (cmd.length() > 1) {
+				throw new IllegalArgumentException(
+						"Command longer than 1 character, which is not allowed. Use 'addLongCommand()' instead!");
+			}
 			this.cmd.add(cmd);
 			return this;
 		}
@@ -91,8 +97,13 @@ public class CmdOptions {
 		}
 
 		public Option setParameterCount(int min, int max) {
+			return this.setParameterCount(min, max, 0);
+		}
+
+		public Option setParameterCount(int min, int max, int step) {
 			this.minParameters = min;
 			this.maxParameters = max;
+			this.stepSizeParameters = step;
 			return this;
 		}
 
@@ -334,7 +345,19 @@ public class CmdOptions {
 		return false;
 	}
 
+	private boolean switchExists(char c) {
+		for (Option op : this.options.values()) {
+			for (String s : op.cmd) {
+				if (s.toCharArray()[0] == c) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public void parse(String[] args) {
+		int exit = 0;
 		// get indices
 		Integer[] indices = getIndices(args);
 		// check for correct options
@@ -342,13 +365,23 @@ public class CmdOptions {
 		for (Integer i : indices) {
 			String o = args[i].replaceAll(optionChar, "");
 			if (!optionExists(o)) {
-				System.err.println("Unrecognized option '" + o + "'");
-				ok = false;
+				if (this.combineSwitches) {
+					for (char c : o.toCharArray()) {
+						if (!switchExists(c)) {
+							System.err.println("Unrecognized option '" + o
+									+ "'");
+							ok = false;
+						}
+					}
+				} else {
+					System.err.println("Unrecognized option '" + o + "'");
+					ok = false;
+				}
 			}
 		}
 		// quit if there are unknown options
 		if (!ok) {
-			System.exit(1);
+			exit = 1;
 		}
 		// now parse
 		for (int a = 0; a < indices.length; ++a) {
@@ -381,12 +414,19 @@ public class CmdOptions {
 			}
 		}
 		if (!ok) {
-			System.exit(2);
+			exit = 2;
 		}
 
-		if (options.get("help").set) {
-			System.out.println(this.toString(true));
-			System.exit(0);
+		// check parameter counts
+		for (Option o : options.values()) {
+			if (o.getValues().size() < o.minParameters
+					|| o.getValues().size() > o.maxParameters
+					|| o.stepSizeParameters != 0
+					&& o.getValues().size() % o.stepSizeParameters != 0) {
+				System.err.println(o.name
+						+ ": Parameter count not correct! Check help.");
+				exit = 3;
+			}
 		}
 
 		// set default for that options that aren't set
@@ -397,10 +437,14 @@ public class CmdOptions {
 								+ " ("
 								+ o.getName()
 								+ "): has no default parameter and has to be set on commandline!");
-				System.exit(3);
+				exit = 4;
 			}
 			if (!o.set && o.defaultParameter.size() != 0)
 				o.values.addAll(o.defaultParameter);
+		}
+		if (options.get("help").set) {
+			System.out.println(this.toString(true));
+			System.exit(exit);
 		}
 		System.out.println(this.toString(false));
 	}
