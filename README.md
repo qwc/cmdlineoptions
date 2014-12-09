@@ -10,6 +10,11 @@ Why not using a small and easy library, which does exactly THAT task? Which give
 This is the goal of this project.
 
 
+The second goals of this project are a personal ones:
+- to have fun programming similiar behaving code in different languages
+- learning new programming languages through adding them to this repository
+
+
 cmdlineoptions
 ===============
 
@@ -34,12 +39,14 @@ Current work and future plans
 ===============
 
 Working on:
-- JUnit tests
+- ~~JUnit tests~~
 - Java: better errorhandling
-- Java: Examples
-- C version [done]
+- ~~Java: Examples~~
+- ~~C version~~
 - Getting started
+- Some java improvements
 
 Future plans:
  - C++ class version
+ - haskell
  - ...
