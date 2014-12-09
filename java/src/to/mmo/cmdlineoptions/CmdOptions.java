@@ -55,7 +55,7 @@ public class CmdOptions {
 
 		public Option addCommand(String cmd) {
 			if (cmd.contains(optionChar)) {
-				cmd = cmd.replaceAll(optionChar, "");
+				cmd = cmd.replace(optionChar, "");
 			}
 			if (cmd.length() > 1) {
 				throw new IllegalArgumentException(
@@ -67,7 +67,7 @@ public class CmdOptions {
 
 		public Option addLongCommand(String cmd) {
 			if (cmd.contains(optionChar))
-				cmd.replaceAll(optionChar, "");
+				cmd = cmd.replace(optionChar, "");
 			this.cmdLong.add(cmd);
 			return this;
 		}
@@ -149,7 +149,7 @@ public class CmdOptions {
 				ret += optionChar + s + ", ";
 			}
 			for (String s : cmdLong) {
-				ret += optionChar + s + ", ";
+				ret += optionChar + optionChar + s + ", ";
 			}
 			ret += ")";
 			if (defaultParameter.size() > 0) {
@@ -194,7 +194,7 @@ public class CmdOptions {
 		this.createOption("help")
 				.setDescription(
 						"Show all possible options and their parameters.")
-				.addCommand("--help").addCommand("-h").addCommand("-?");
+				.addLongCommand("--help").addCommand("-h").addCommand("-?");
 	}
 
 	public static CmdOptions i() {
@@ -370,7 +370,7 @@ public class CmdOptions {
 		// check for correct options
 		boolean ok = true;
 		for (Integer i : indices) {
-			String o = args[i].replaceAll(optionChar, "");
+			String o = args[i].replace(optionChar, "");
 			if (!optionExists(o)) {
 				if (this.combineSwitches) {
 					for (char c : o.toCharArray()) {
@@ -392,7 +392,7 @@ public class CmdOptions {
 		}
 		// now parse
 		for (int a = 0; a < indices.length; ++a) {
-			String o = args[indices[a]].replaceAll(optionChar, "");
+			String o = args[indices[a]].replace(optionChar, "");
 			// the option is set!
 			this.getBareOption(o).setSet(true);
 			// are there parameters?
