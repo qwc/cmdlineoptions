@@ -146,13 +146,20 @@ public class CmdOptions {
 		public String toString() {
 			String ret = name + " (";
 			for (String s : cmd) {
-				ret += s + ", ";
+				ret += optionChar + s + ", ";
 			}
-			ret += ")"
-					+ (defaultParameter != null ? ": default="
-							+ defaultParameter : "")
-					+ (description != null ? "\n\t\t" + description : "");
-			if (possibleParams != null) {
+			for (String s : cmdLong) {
+				ret += optionChar + s + ", ";
+			}
+			ret += ")";
+			if (defaultParameter.size() > 0) {
+				ret += ": default=";
+				for (String s : defaultParameter) {
+					ret += s + ",";
+				}
+			}
+			ret += (description != null ? "\n\t\t" + description : "");
+			if (possibleParams.size() > 0) {
 				boolean start = true;
 				ret += "\n\t\t(Possible parameters: ";
 				for (String s : possibleParams) {
