@@ -40,11 +40,13 @@ Current work and future plans
 
 Working on:
 - ~~JUnit tests~~
-- Java: better errorhandling
+- ~~Java: better errorhandling~~
 - ~~Java: Examples~~
 - ~~C version~~
 - Getting started
-- Some java improvements
+- Unit tests
+- ~~Some java improvements~~
+  - get the improvments into the C version
 
 Future plans:
  - C++ class version
