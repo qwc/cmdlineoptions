@@ -18,186 +18,17 @@ public class CmdOptions {
 	private static CmdOptions instance;
 
 	private static String optionChar;
-	private HashMap<String, Option> options;
+	private HashMap<String, CommandLineOption> options;
 	private boolean showOptions;
 	private boolean combineSwitches;
 	private boolean dontQuitOnError;
-
-	public static class Option {
-		private String name;
-		private ArrayList<String> cmd;
-		private ArrayList<String> cmdLong;
-		private String description;
-		private ArrayList<String> defaultParameter;
-
-		private ArrayList<String> possibleParams;
-		private boolean set;
-		private boolean required;
-		private ArrayList<String> values;
-		private int maxParameters, minParameters;
-		private ArrayList<String> examples;
-		private int stepSizeParameters;
-
-		public ArrayList<String> getValues() {
-			return values;
-		}
-
-		public ArrayList<String> getDefaultParameter() {
-			return defaultParameter;
-		}
-
-		public Option() {
-			values = new ArrayList<String>();
-			cmd = new ArrayList<String>();
-			cmdLong = new ArrayList<String>();
-			defaultParameter = new ArrayList<String>();
-			possibleParams = new ArrayList<String>();
-			examples = new ArrayList<String>();
-		}
-
-		public Option addCommand(String cmd) {
-			if (cmd.contains(optionChar)) {
-				cmd = cmd.replace(optionChar, "");
-			}
-			if (cmd.length() > 1) {
-				throw new IllegalArgumentException(
-						"Command longer than 1 character, which is not allowed. Use 'addLongCommand()' instead!");
-			}
-			this.cmd.add(cmd);
-			return this;
-		}
-
-		public Option addLongCommand(String cmd) {
-			if (cmd.contains(optionChar))
-				cmd = cmd.replace(optionChar, "");
-			this.cmdLong.add(cmd);
-			return this;
-		}
-
-		public Option addDefaultParameter(String d) {
-			this.defaultParameter.add(d);
-			return this;
-		}
-
-		public Option addPossibleParameter(String p) {
-			this.possibleParams.add(p);
-			return this;
-		}
-
-		public Option addValue(String value) {
-			this.values.add(value);
-			return this;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public Option setName(String name) {
-			this.name = name;
-			return this;
-		}
-
-		public Option setParameterCount(int min, int max) {
-			return this.setParameterCount(min, max, 0);
-		}
-
-		public Option setParameterCount(int min, int max, int step) {
-			this.minParameters = min;
-			this.maxParameters = max;
-			this.stepSizeParameters = step;
-			return this;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
-		public Option setDescription(String description) {
-			this.description = description;
-			return this;
-		}
-
-		public Option setRequired(boolean required) {
-			this.required = true;
-			return this;
-		}
-
-		public boolean isSet() {
-			return set;
-		}
-
-		public boolean valuesContains(String value) {
-			return values.contains(value);
-		}
-
-		public int getIndexOf(String value) {
-			return values.indexOf(value);
-		}
-
-		public Option setSet(boolean set) {
-			this.set = set;
-			return this;
-		}
-
-		public Option addExample(String example) {
-			this.examples.add(example);
-			return this;
-		}
-
-		public String toString() {
-			return toString(false);
-		}
-
-		public String toString(boolean help) {
-			String ret = name;
-			ret += " (";
-			for (String s : cmd) {
-				ret += optionChar + s + ", ";
-			}
-			for (String s : cmdLong) {
-				ret += optionChar + optionChar + s + ", ";
-			}
-			ret += ")";
-			if (help && defaultParameter.size() > 0) {
-				ret += ": default=";
-				for (String s : defaultParameter) {
-					ret += s + ",";
-				}
-			}
-			ret += (help && description != null ? "\n\t\t" + description : "");
-			if (help && possibleParams.size() > 0) {
-				boolean start = true;
-				ret += "\n\t\t(Possible parameters: ";
-				for (String s : possibleParams) {
-					ret += (start ? "" : ", ") + s;
-					start = false;
-				}
-				ret += ")";
-			}
-			if (set) {
-				ret += "\n\t\t--> current Setting: ";
-				if (values.size() > 0) {
-					boolean start = true;
-					for (String s : values) {
-						ret += (start ? "" : ",") + s;
-						start = false;
-					}
-				} else {
-					ret += "true";
-				}
-				// ret += "\n";
-			}
-			return ret;
-		}
-	}
 
 	private CmdOptions() {
 		optionChar = "-";
 		this.setSwitchCombination(false);
 		this.setShowOptions(false);
 		this.setDontQuitOnError(false);
-		options = new HashMap<String, Option>();
+		options = new HashMap<String, CommandLineOption>();
 		this.createOption("help")
 				.setDescription(
 						"Show all possible options and their parameters.")
@@ -233,14 +64,13 @@ public class CmdOptions {
 		}
 	}
 
-	public Option createOption(String name) {
-		Option o = new Option();
-		o.setName(name);
+	public CommandLineOption createOption(String name) {
+		CommandLineOption o = new CommandLineOption(name);
 		this.options.put(name, o);
 		return o;
 	}
 
-	public Option getBareOption(String name) {
+	public CommandLineOption getBareOption(String name) {
 		return options.get(name);
 	}
 
@@ -257,10 +87,11 @@ public class CmdOptions {
 	}
 
 	public String[] getOption(String name) {
-		if (options.get(name).values.size() > 0)
-			return options.get(name).values.toArray(new String[0]);
-		else if (options.get(name).defaultParameter != null)
+		if (options.get(name).getValues().size() > 0)
 			return options.get(name).getValues().toArray(new String[0]);
+		else if (options.get(name).getDefaultParameter().size() > 0)
+			return options.get(name).getDefaultParameter()
+					.toArray(new String[0]);
 		return null;
 	}
 
@@ -272,9 +103,9 @@ public class CmdOptions {
 	}
 
 	public Integer[] getOptionAsInt(String name) {
-		if (options.get(name).values.size() > 0) {
+		if (options.get(name).getValues().size() > 0) {
 			ArrayList<Integer> list = new ArrayList<Integer>();
-			for (String o : options.get(name).values) {
+			for (String o : options.get(name).getValues()) {
 				list.add(Integer.parseInt(o));
 			}
 			return list.toArray(new Integer[0]);
@@ -297,9 +128,9 @@ public class CmdOptions {
 	}
 
 	public Double[] getOptionAsDouble(String name) {
-		if (options.get(name).values.size() > 0) {
+		if (options.get(name).getValues().size() > 0) {
 			ArrayList<Double> list = new ArrayList<Double>();
-			for (String o : options.get(name).values) {
+			for (String o : options.get(name).getValues()) {
 				list.add(Double.parseDouble(o));
 			}
 			return list.toArray(new Double[0]);
@@ -322,7 +153,7 @@ public class CmdOptions {
 	}
 
 	public boolean isSet(String option) {
-		return options.get(option).set;
+		return options.get(option).isSet();
 	}
 
 	public boolean isSet(String option, String parameter) {
@@ -330,8 +161,8 @@ public class CmdOptions {
 	}
 
 	public void resetValues() {
-		for (Option o : options.values()) {
-			o.values.clear();
+		for (CommandLineOption o : options.values()) {
+			o.getValues().clear();
 		}
 	}
 
@@ -345,14 +176,15 @@ public class CmdOptions {
 			b.append("Possible options:\n");
 		}
 		b.append("-options\n");
-		Option[] vars = options.values().toArray(new Option[0]);
-		Arrays.sort(vars, new Comparator<Option>() {
+		CommandLineOption[] vars = options.values().toArray(
+				new CommandLineOption[0]);
+		Arrays.sort(vars, new Comparator<CommandLineOption>() {
 			@Override
-			public int compare(Option o1, Option o2) {
-				return o1.name.compareTo(o2.name);
+			public int compare(CommandLineOption o1, CommandLineOption o2) {
+				return o1.getName().compareTo(o2.getName());
 			}
 		});
-		for (Option o : vars) {
+		for (CommandLineOption o : vars) {
 			b.append("\t").append(o.toString(help)).append("\n");
 		}
 		b.append("/options\n");
@@ -369,14 +201,14 @@ public class CmdOptions {
 		return indices.toArray(new Integer[0]);
 	}
 
-	private Option getOptionByCommand(String cmd) {
-		for (Option o : this.options.values()) {
-			for (String s : o.cmd) {
+	private CommandLineOption getOptionByCommand(String cmd) {
+		for (CommandLineOption o : this.options.values()) {
+			for (String s : o.getCmd()) {
 				if (cmd.equals(s)) {
 					return o;
 				}
 			}
-			for (String s : o.cmdLong) {
+			for (String s : o.getCmdLong()) {
 				if (cmd.equals(s)) {
 					return o;
 				}
@@ -390,8 +222,8 @@ public class CmdOptions {
 	}
 
 	private boolean switchExists(char c) {
-		for (Option op : this.options.values()) {
-			for (String s : op.cmd) {
+		for (CommandLineOption op : this.options.values()) {
+			for (String s : op.getCmd()) {
 				if (s.toCharArray()[0] == c) {
 					return true;
 				}
@@ -400,10 +232,10 @@ public class CmdOptions {
 		return false;
 	}
 
-	private Option[] getOptionBySwitches(String switches) {
-		List<Option> o = new ArrayList<CmdOptions.Option>();
-		for (Option op : this.options.values()) {
-			for (String s : op.cmd) {
+	private CommandLineOption[] getOptionBySwitches(String switches) {
+		List<CommandLineOption> o = new ArrayList<CommandLineOption>();
+		for (CommandLineOption op : this.options.values()) {
+			for (String s : op.getCmd()) {
 				for (char c : switches.toCharArray()) {
 					if (s.toCharArray()[0] == c) {
 						o.add(op);
@@ -411,7 +243,7 @@ public class CmdOptions {
 				}
 			}
 		}
-		return o.toArray(new Option[0]);
+		return o.toArray(new CommandLineOption[0]);
 	}
 
 	public int parse(String[] args) {
@@ -442,14 +274,14 @@ public class CmdOptions {
 			exit = 1;
 		}
 		// now parse
-		Option op;
+		CommandLineOption op;
 		for (int a = 0; a < indices.length; ++a) {
 			String o = args[indices[a]].replace(optionChar, "");
 			op = this.getOptionByCommand(o);
 			if (op == null) {
 				if (this.combineSwitches) {
-					Option[] mop = getOptionBySwitches(o);
-					for (Option opt : mop) {
+					CommandLineOption[] mop = getOptionBySwitches(o);
+					for (CommandLineOption opt : mop) {
 						opt.setSet(true);
 					}
 				}
@@ -473,12 +305,12 @@ public class CmdOptions {
 		}
 
 		// check for possible parameters
-		for (Option o : options.values()) {
+		for (CommandLineOption o : options.values()) {
 			for (String s : o.getValues()) {
-				if (o.possibleParams.size() > 0
-						&& !o.possibleParams.contains(s)) {
+				if (o.getPossibleParams().size() > 0
+						&& !o.getPossibleParams().contains(s)) {
 					System.err.println("Parameter \"" + s + "\" for Option \""
-							+ o.name + "\" not allowed!");
+							+ o.getName() + "\" not allowed!");
 					ok = false;
 				}
 			}
@@ -488,31 +320,33 @@ public class CmdOptions {
 		}
 
 		// check parameter counts
-		for (Option o : options.values()) {
-			if (o.getValues().size() < o.minParameters && o.minParameters != 0
-					|| o.getValues().size() > o.maxParameters
-					&& o.maxParameters != 0 || o.stepSizeParameters != 0
-					&& o.getValues().size() % o.stepSizeParameters != 0) {
-				System.err.println(o.name
+		for (CommandLineOption o : options.values()) {
+			if (o.getValues().size() < o.getMinParameters()
+					&& o.getMinParameters() != 0
+					|| o.getValues().size() > o.getMaxParameters()
+					&& o.getMaxParameters() != 0
+					|| o.getStepSizeParameters() != 0
+					&& o.getValues().size() % o.getStepSizeParameters() != 0) {
+				System.err.println(o.getName()
 						+ ": Parameter count not correct! Check help.");
 				exit = 3;
 			}
 		}
 
 		// set default for that options that aren't set
-		for (Option o : options.values()) {
-			if (!o.set && o.required) {
+		for (CommandLineOption o : options.values()) {
+			if (!o.isSet() && o.isRequired()) {
 				System.err
-						.println(o.name
+						.println(o.getName()
 								+ " ("
 								+ o.getName()
 								+ "): has no default parameter and has to be set on commandline!");
 				exit = 4;
 			}
-			if (!o.set && o.defaultParameter.size() != 0)
-				o.values.addAll(o.defaultParameter);
+			if (!o.isSet() && o.getDefaultParameter().size() != 0)
+				o.getValues().addAll(o.getDefaultParameter());
 		}
-		if (options.get("help").set || exit > 0) {
+		if (options.get("help").isSet() || exit > 0) {
 			System.out.println(this.toString(true));
 			if (!this.dontQuitOnError)
 				System.exit(exit);
@@ -521,5 +355,9 @@ public class CmdOptions {
 			System.out.println(this.toString(false));
 		}
 		return exit;
+	}
+
+	public static String getOptionChar() {
+		return optionChar;
 	}
 }
