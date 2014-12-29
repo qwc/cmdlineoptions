@@ -4,26 +4,37 @@ import java.util.ArrayList;
 
 public class CommandLineOption {
 	private String name;
-	private ArrayList<String> cmd;
-	private ArrayList<String> cmdLong;
-	private String description;
-	private ArrayList<String> defaultParameter;
+	private ArrayList<String> cmd; // short command, only 1 character!
+	private ArrayList<String> cmdLong; // long command, several characters
+	private String description; // description of the cmd line parameter
+	private ArrayList<String> examples; // provide examples?!
+	private ArrayList<String> defaultParameters; // parameter not set but you
+													// need input?
+	private ArrayList<String> possibleParams; // 'enum' of options which can be
+												// specified
+	private ArrayList<String> values; // the real values given on the command
+										// line
 
-	private ArrayList<String> possibleParams;
-	private boolean set;
-	private boolean required;
-	private ArrayList<String> values;
-	private int maxParameters, minParameters;
-	private ArrayList<String> examples;
-	private int stepSizeParameters;
+	private ArrayList<String> parameterRegexes; // regex fun, here you can
+												// specify regex strings for
+												// multiple parameters
 
+	private boolean set; // is it set or not?
+	private boolean required; // required or not?
+	private int maxParameters, minParameters; // count of parameters
+	private int stepSizeParameters; // parameter count has always to be a
+									// multiple of ... step size parameter!
+
+	// large footprint here ... future optimization: create arrays only when
+	// needed...
 	public CommandLineOption() {
 		values = new ArrayList<String>();
 		cmd = new ArrayList<String>();
 		cmdLong = new ArrayList<String>();
-		defaultParameter = new ArrayList<String>();
+		defaultParameters = new ArrayList<String>();
 		possibleParams = new ArrayList<String>();
 		examples = new ArrayList<String>();
+		parameterRegexes = new ArrayList<String>();
 	}
 
 	public CommandLineOption(String name) {
@@ -36,7 +47,7 @@ public class CommandLineOption {
 	}
 
 	public ArrayList<String> getDefaultParameter() {
-		return defaultParameter;
+		return defaultParameters;
 	}
 
 	public CommandLineOption addCommand(String cmd) {
@@ -59,7 +70,7 @@ public class CommandLineOption {
 	}
 
 	public CommandLineOption addDefaultParameter(String d) {
-		this.defaultParameter.add(d);
+		this.defaultParameters.add(d);
 		return this;
 	}
 
@@ -144,9 +155,9 @@ public class CommandLineOption {
 					+ ", ";
 		}
 		ret += ")";
-		if (help && defaultParameter.size() > 0) {
+		if (help && defaultParameters.size() > 0) {
 			ret += ": default=";
-			for (String s : defaultParameter) {
+			for (String s : defaultParameters) {
 				ret += s + ",";
 			}
 		}

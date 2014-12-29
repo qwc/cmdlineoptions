@@ -46,6 +46,7 @@ public class CmdOptions {
 		this.combineSwitches = on;
 	}
 
+	@SuppressWarnings("static-access")
 	public void setOptionCharacter(String c) {
 		this.optionChar = c;
 	}
