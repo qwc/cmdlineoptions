@@ -10,6 +10,7 @@
 #include <memory>
 #include <string>
 #include <list>
+#include <map>
 
 namespace cmdlineoptions {
 
@@ -55,18 +56,19 @@ class CmdLineOptions {
 
 public:
   virtual ~CmdLineOptions();
-  static std::unique_ptr<CmdLineOptions> i();
-  std::shared_ptr<Option> create(std::string name);
-  std::shared_ptr<Option> getOption(std::string name);
-  void setCommandCharacter(char cmdchar);
+  static const std::unique_ptr<CmdLineOptions> &i();
+  std::shared_ptr<Option> create(std::string &name);
+  std::shared_ptr<Option> getOption(std::string &name);
+  void setCommandCharacter(char &cmdchar);
 
-  void parse(char** argv, int argc);
+  void parse(char **argv, int argc);
   void parse(std::list<std::string> argv);
 
 private:
   char cmdchar;
   CmdLineOptions();
   static std::unique_ptr<CmdLineOptions> instance;
+  std::map<std::string, std::shared_ptr<Option>> options;
 };
 
 } /* namespace cmdlineoptions */
