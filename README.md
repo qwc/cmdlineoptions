@@ -7,10 +7,10 @@ Why not using a small and easy library, which does exactly THAT task? Which give
 
 
 
-This is the goal of this project.
+This is a goal of this project.
 
 
-The second goals of this project are a personal ones:
+The main goals of this project are a personal ones:
 - to have fun programming similiar behaving code in different languages
 - learning new programming languages through adding them to this repository
 
