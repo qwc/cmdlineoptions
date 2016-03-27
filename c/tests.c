@@ -23,7 +23,7 @@ void configureDefaultSet() {
 	CmdLO_AddPossibleParameter("example", "test2");
 }
 
-#define ASSERT(x,y) if(!(x)) printf("ASSERT FAILED! '%s'.\n",y); else printf("ASSERT '%s' succeded.\n",y)
+#define ASSERT(x,y) if(!(x)) printf("ASSERT FAILED! '%s'.\n",y); else printf("ASSERT '%s' succeeded.\n",y)
 
 int main(int argc, char** argv) {
 	// configure the options
@@ -182,4 +182,3 @@ int main(int argc, char** argv) {
 			"something value count");
 	return 0;
 }
-
