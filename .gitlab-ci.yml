@@ -1,0 +1,14 @@
+image: gcc:latest
+stages:
+  - build
+  - test
+
+build-c:
+  stage: build
+  script:
+    - cd c; make
+
+test-c:
+  stage: test
+  script:
+    - cd c; make test
