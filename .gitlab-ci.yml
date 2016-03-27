@@ -11,9 +11,9 @@ build-c:
       - libcmdlineoptions.*
       - tests-*
 
-test-c:
-  stage: test
-  script:
-    - cd c; make test
-  dependencies:
-    - build-c
+#test-c:
+  #stage: test
+  #script:
+    #- cd c; make test
+  #dependencies:
+    #- build-c
