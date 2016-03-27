@@ -1,7 +1,6 @@
 image: gcc:latest
 stages:
   - build
-  - test
 
 build-c:
   stage: build
