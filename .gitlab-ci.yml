@@ -7,6 +7,9 @@ build-c:
   stage: build
   script:
     - cd c; make
+  artifacts:
+    - libcmdlineoptions.*
+    - tests-*
 
 test-c:
   stage: test
