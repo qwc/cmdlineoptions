@@ -8,8 +8,8 @@ build-c:
     - cd c; make
   artifacts:
     paths:
-      - libcmdlineoptions.*
-      - tests-*
+      - libcmdlineoptions.so
+      - libcmdlineoptions.a
 
 #test-c:
   #stage: test
