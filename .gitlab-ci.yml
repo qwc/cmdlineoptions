@@ -1,0 +1,19 @@
+image: gcc:latest
+stages:
+  - build
+
+build-c:
+  stage: build
+  script:
+    - cd c; make
+  artifacts:
+    paths:
+      - c/libcmdlineoptions.*
+      - c/tests-*
+
+#test-c:
+  #stage: test
+  #script:
+    #- cd c; make test
+  #dependencies:
+    #- build-c
