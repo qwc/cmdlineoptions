@@ -1,8 +1,8 @@
-image: gcc:latest
 stages:
   - build
 
 build-c:
+  image: archlinux_gcc53_qt5_cmake
   stage: build
   script:
     - cd c; make
@@ -10,6 +10,11 @@ build-c:
     paths:
       - c/libcmdlineoptions.*
       - c/tests-*
+
+build-java:
+  image: archlinux_jdk8
+  stage: build
+
 
 #test-c:
   #stage: test
