@@ -1,8 +1,8 @@
-image: archlinux_gcc5.3_qt5
 stages:
   - build
 
 build-c:
+  image: archlinux_gcc5.3_qt5
   stage: build
   script:
     - cd c; make
@@ -12,6 +12,7 @@ build-c:
       - c/tests-*
 
 build-cpp:
+  image: archlinux_gcc5.3_qt5
   stage: build
   script: 
     - cd cpp; mkdir build; cd build
