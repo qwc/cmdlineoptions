@@ -1,4 +1,4 @@
-image: gcc:latest
+image: archlinux_gcc5.3_qt5
 stages:
   - build
 
