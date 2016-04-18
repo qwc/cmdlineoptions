@@ -4,3 +4,5 @@ project(CmdLineOptions)
 set(CMAKE_CXX_FLAGS "--std=c++14 -g -Wall")
 add_library(CmdLineOptions_static STATIC CmdLineOptions.cpp)
 add_library(CmdLineOptions SHARED CmdLineOptions.cpp)
+
+#add_executable(CmdLineOptions_test CmdLineOptions_test.cpp)
