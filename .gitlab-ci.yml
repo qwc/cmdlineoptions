@@ -1,0 +1,30 @@
+image: gcc:latest
+stages:
+  - build
+
+build-c:
+  stage: build
+  script:
+    - cd c; make
+  artifacts:
+    paths:
+      - c/libcmdlineoptions.*
+      - c/tests-*
+
+build-cpp:
+  stage: build
+  script: 
+    - cd cpp; mkdir build; cd build
+    - cmake ..
+    - make
+  artifacts:
+    paths:
+      - cpp/build/libCmdLineOptions.so
+      - cpp/build/libCmdLineOptions_static.a
+
+#test-c:
+  #stage: test
+  #script:
+    #- cd c; make test
+  #dependencies:
+    #- build-c
